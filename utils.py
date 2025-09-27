@@ -79,28 +79,20 @@ def extract_time (data):
   return time, max_seq_len
 
 
-def rnn_cell(module_name, hidden_dim):
-  """Basic RNN Cell.
-    
-  Args:
-    - module_name: gru, lstm, or lstmLN
-    
-  Returns:
-    - rnn_cell: RNN Cell
-  """
-  assert module_name in ['gru','lstm','lstmLN']
-  
-  # GRU
-  if (module_name == 'gru'):
-    rnn_cell = tf.nn.rnn_cell.GRUCell(num_units=hidden_dim, activation=tf.nn.tanh)
-  # LSTM
-  elif (module_name == 'lstm'):
-    rnn_cell = tf.contrib.rnn.BasicLSTMCell(num_units=hidden_dim, activation=tf.nn.tanh)
-  # LSTM Layer Normalization
-  elif (module_name == 'lstmLN'):
-    rnn_cell = tf.contrib.rnn.LayerNormBasicLSTMCell(num_units=hidden_dim, activation=tf.nn.tanh)
-  return rnn_cell
+import tensorflow as tf
 
+def rnn_cell(module_name, hidden_dim):
+    """Return RNN cell based on the specified module name."""
+    print(f"Using {module_name} as RNN cell.")
+    if module_name == 'gru':
+        return tf.keras.layers.GRUCell(hidden_dim, activation=tf.nn.tanh)
+    elif module_name == 'lstm':
+        return tf.keras.layers.LSTMCell(hidden_dim, activation=tf.nn.tanh)
+    elif module_name == 'rnn':
+        return tf.keras.layers.SimpleRNNCell(hidden_dim, activation=tf.nn.tanh)
+    else:
+        print(f"Warning: Unsupported RNN module: {module_name}")
+        raise ValueError(f"Unsupported RNN module: {module_name}")
 
 def random_generator (batch_size, z_dim, T_mb, max_seq_len):
   """Random vector generation.
